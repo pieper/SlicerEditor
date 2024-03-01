@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>browser-amd-editor</title>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	</head>
+	<body>
+		<h2>Monaco Editor Sample</h2>
+		<div id="container" style="width: 800px; height: 600px; border: 1px solid grey"></div>
+    <p id="run">Run this in slicer</p>
+
+		<!-- OR ANY OTHER AMD LOADER HERE INSTEAD OF loader.js -->
+		<script src="./node_modules/monaco-editor/min/vs/loader.js"></script>
+		<script>
+			require.config({ paths: { vs: './node_modules/monaco-editor/min/vs' } });
+var pythonCode = `
+import SampleData
+SampleData.SampleDataLogic().downloadMRHead()
+`
+
+			require(['vs/editor/editor.main'], function () {
+				window.editor = monaco.editor.create(document.getElementById('container'), {
+					value: pythonCode,
+					language: 'python'
+				});
+			});
+
+      document.getElementById("run").addEventListener("click", () => {
+        code = window.editor.getModel().getValue();  
+        window.slicerPython.evalPython(code);
+      });
+
+		</script>
+	</body>
+</html>
