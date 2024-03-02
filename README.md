@@ -14,10 +14,18 @@ editor.url = "https://pieper.github.io/SlicerEditor"
 editor.show()
 ```
 
+![image](https://github.com/pieper/SlicerEditor/assets/126077/fa556ee4-bf19-4102-a0f8-8edad05e45d8)
+
+
 Press the slicer icon to run the code.
+
+
 
 # Notes
 * Running code from web pages in Slicer is a possible security issue,
 so you must approve with the dialog.  Use care when accessing untrusted
 pages using the qSlicerWebWidget infrastructure.
+
+![image](https://github.com/pieper/SlicerEditor/assets/126077/3e1d44d7-90ac-4660-910f-d537bc6e76e3)
+
 * This is just a skeleton prototype as a proof of concept. See [this dicussion](https://discourse.slicer.org/t/support-python-text-highlighting-in-text-module/34511) for more ideas about how this can be improved to be useful.
