@@ -44,8 +44,16 @@ SampleData.SampleDataLogic().downloadMRHead()
       });
 
       document.getElementById("run").addEventListener("click", () => {
-        code = window.editor.getModel().getValue();  
-        window.slicerPython.evalPython(code);
+        let code = window.editor.getModel().getValueInRange(window.editor.getSelection());
+        if (code == '') {
+          code = window.editor.getModel().getValue();
+        }
+        if (window.slicerPython) {
+          window.slicerPython.evalPython(code);
+        } else {
+          console.log("In Slicer you would have executed this code:");
+          console.log(code);
+        }
       });
 
 		</script>
