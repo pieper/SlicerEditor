@@ -32,7 +32,7 @@ SampleData.SampleDataLogic().downloadMRHead()
       `], { type: 'text/javascript' }));
 
       require(["vs/editor/editor.main"], function () {
-        let editor = monaco.editor.create(document.getElementById('container'), {
+        window.editor = monaco.editor.create(document.getElementById('container'), {
           value: pythonCode,
           language: 'python',
           theme: 'vs-dark'
