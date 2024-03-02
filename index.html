@@ -6,7 +6,7 @@
     <link
 			rel="stylesheet"
 			data-name="vs/editor/editor.main"
-			href="./node_modules/monaco-editor/min/vs/editor/editor.main.css"
+			href="./editor.main.css"
 		/>
 	</head>
 	<body>
@@ -15,15 +15,15 @@
     <p id="run">Run this in slicer</p>
 
 		<!-- OR ANY OTHER AMD LOADER HERE INSTEAD OF loader.js -->
-		<script src="./node_modules/monaco-editor/min/vs/loader.js"></script>
+		<script src="./loader.js"></script>
 		<script>
-			require.config({ paths: { vs: './node_modules/monaco-editor/min/vs' } });
+			require.config({ paths: { vs: '.' } });
 var pythonCode = `
 import SampleData
 SampleData.SampleDataLogic().downloadMRHead()
 `
 
-			require(['vs/editor/editor.main'], function () {
+			require(['editor.main'], function () {
 				window.editor = monaco.editor.create(document.getElementById('container'), {
 					value: pythonCode,
 					language: 'python'
