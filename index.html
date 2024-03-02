@@ -3,32 +3,41 @@
 	<head>
 		<title>browser-amd-editor</title>
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-    <link
-			rel="stylesheet"
-			data-name="vs/editor/editor.main"
-			href="./editor.main.css"
-		/>
+
+    <script src="https://unpkg.com/monaco-editor@latest/min/vs/loader.js"></script>
+
+
 	</head>
 	<body>
 		<h2>Monaco Editor Sample</h2>
 		<div id="container" style="width: 800px; height: 600px; border: 1px solid grey"></div>
     <p id="run">Run this in slicer</p>
 
-		<!-- OR ANY OTHER AMD LOADER HERE INSTEAD OF loader.js -->
-		<script src="./loader.js"></script>
-		<script>
-			require.config({ paths: { vs: '.' } });
-var pythonCode = `
+    <script>
+
+      var pythonCode = `
 import SampleData
 SampleData.SampleDataLogic().downloadMRHead()
 `
 
-			require(['editor.main'], function () {
-				window.editor = monaco.editor.create(document.getElementById('container'), {
-					value: pythonCode,
-					language: 'python'
-				});
-			});
+      // https://stackoverflow.com/questions/57048510/how-to-initialize-microsoft-monaco-editor-in-a-browser-using-simple-javascript-o
+      require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor@latest/min/vs' }});
+      window.MonacoEnvironment = { getWorkerUrl: () => proxy };
+
+      let proxy = URL.createObjectURL(new Blob([`
+        self.MonacoEnvironment = {
+          baseUrl: 'https://unpkg.com/monaco-editor@latest/min/'
+        };
+        importScripts('https://unpkg.com/monaco-editor@latest/min/vs/base/worker/workerMain.js');
+      `], { type: 'text/javascript' }));
+
+      require(["vs/editor/editor.main"], function () {
+        let editor = monaco.editor.create(document.getElementById('container'), {
+          value: pythonCode,
+          language: 'python',
+          theme: 'vs-dark'
+        });
+      });
 
       document.getElementById("run").addEventListener("click", () => {
         code = window.editor.getModel().getValue();  
