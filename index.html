@@ -26,41 +26,31 @@ import SampleData
 SampleData.SampleDataLogic().downloadMRHead()
 `
 
+var completions = [];
 
       function setupSlicerCompletion(monaco) {
 
-        function createDependencyProposals(range) {
-          var suggestions = [
-            {
-              label: '"slicer"',
-              kind: monaco.languages.CompletionItemKind.Function,
-              documentation: "Text from slicer.",
-              insertText: 'slicer',
-              range: range,
-            },
-            {
-              label: '"qt"',
-              kind: monaco.languages.CompletionItemKind.Function,
-              documentation: "Text from slicer.",
-              insertText: 'qt',
-              range: range,
-            },
-            {
-              label: '"vtk"',
-              kind: monaco.languages.CompletionItemKind.Function,
-              documentation: "Text from slicer.",
-              insertText: 'vtk',
-              range: range,
-            },
-            {
-              label: '"vtkITK"',
-              kind: monaco.languages.CompletionItemKind.Function,
-              documentation: "Text from slicer.",
-              insertText: 'vtkITK',
-              range: range,
-            },
-          ];
-          return suggestions;
+        function createSuggestions(range) {
+          var x = 10;
+          var jsString = "completions = ['vtk', 'qt']";
+          var pythonString = `qt.QTimer.singleShot(0, lambda : ww.evalJS( ${jsString} )`;
+          slicerPython.evalPython(pythonString)
+
+          return new Promise( (resolve, reject) => {
+            setTimeout(resolve, 0);
+          }).then( () => {
+              var suggestions = [];
+              completions.forEach((key) => {
+                suggestions.push({
+                  label: key,
+                  kind: monaco.languages.CompletionItemKind.Function,
+                  insertText: key,
+                  range: range,
+                });
+              });
+              completions = suggestions;
+              return suggestions;
+          });
         }
 
         monaco.languages.registerCompletionItemProvider("python", {
@@ -82,7 +72,7 @@ SampleData.SampleDataLogic().downloadMRHead()
               endColumn: word.endColumn,
             };
             return {
-              suggestions: createDependencyProposals(range),
+              suggestions: createSuggestions(range),
             };
           },
         });
