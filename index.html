@@ -26,6 +26,68 @@ import SampleData
 SampleData.SampleDataLogic().downloadMRHead()
 `
 
+
+      function setupSlicerCompletion(monaco) {
+
+        function createDependencyProposals(range) {
+          var suggestions = [
+            {
+              label: '"slicer"',
+              kind: monaco.languages.CompletionItemKind.Function,
+              documentation: "Text from slicer.",
+              insertText: 'slicer',
+              range: range,
+            },
+            {
+              label: '"qt"',
+              kind: monaco.languages.CompletionItemKind.Function,
+              documentation: "Text from slicer.",
+              insertText: 'qt',
+              range: range,
+            },
+            {
+              label: '"vtk"',
+              kind: monaco.languages.CompletionItemKind.Function,
+              documentation: "Text from slicer.",
+              insertText: 'vtk',
+              range: range,
+            },
+            {
+              label: '"vtkITK"',
+              kind: monaco.languages.CompletionItemKind.Function,
+              documentation: "Text from slicer.",
+              insertText: 'vtkITK',
+              range: range,
+            },
+          ];
+          return suggestions;
+        }
+
+        monaco.languages.registerCompletionItemProvider("python", {
+          triggerCharacters: ["."],
+          provideCompletionItems: function (model, position) {
+            var textUntilPosition = model.getValueInRange({
+              startLineNumber: position.lineNumber,
+              startColumn: 1,
+              endLineNumber: position.lineNumber,
+              endColumn: position.column,
+            });
+            console.log('text', textUntilPosition)
+            var word = model.getWordUntilPosition(position);
+            console.log('word', word)
+            var range = {
+              startLineNumber: position.lineNumber,
+              endLineNumber: position.lineNumber,
+              startColumn: word.startColumn,
+              endColumn: word.endColumn,
+            };
+            return {
+              suggestions: createDependencyProposals(range),
+            };
+          },
+        });
+      }
+
       require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor@latest/min/vs' }});
       window.MonacoEnvironment = { getWorkerUrl: () => proxy };
 
@@ -37,6 +99,7 @@ SampleData.SampleDataLogic().downloadMRHead()
       `], { type: 'text/javascript' }));
 
       require(["vs/editor/editor.main"], function () {
+        setupSlicerCompletion(monaco);
         window.editor = monaco.editor.create(document.getElementById('container'), {
           value: pythonCode,
           language: 'python',
