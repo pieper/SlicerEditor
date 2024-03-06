@@ -26,36 +26,40 @@ import SampleData
 SampleData.SampleDataLogic().downloadMRHead()
 `
 
-var completions = [];
+      const evalSlicer = async (s) => {
+        let jsonResult = await slicerPython.evalPython(s, slicerPython.EvalPythonMode.EvalInput);
+        return JSON.parse( jsonResult );
+      };
+      const evalSlicerSingle = async (s) => {
+        return await slicerPython.evalPython(s, slicerPython.EvalPythonMode.SingleInput);
+      };
 
-      function setupSlicerCompletion(monaco) {
-
-        function createSuggestions(range) {
-          var x = 10;
-          var jsString = "completions = ['vtk', 'qt']";
-          var pythonString = `qt.QTimer.singleShot(0, lambda : ww.evalJS( ${jsString} )`;
-          slicerPython.evalPython(pythonString)
-
-          return new Promise( (resolve, reject) => {
-            setTimeout(resolve, 0);
-          }).then( () => {
-              var suggestions = [];
-              completions.forEach((key) => {
-                suggestions.push({
-                  label: key,
-                  kind: monaco.languages.CompletionItemKind.Function,
-                  insertText: key,
-                  range: range,
-                });
-              });
-              completions = suggestions;
-              return suggestions;
+      // set up a completer by calling back into Slicer via python
+      async function setupSlicerCompletion(monaco) {
+        await evalSlicerSingle("import json");
+        async function createSuggestions(range, textUntilPosition, word) {
+          let completions = [];
+          if (textUntilPosition[textUntilPosition.length - 1] != ".") {
+            completions = await evalSlicer("json.dumps(list(globals().keys()))");
+          } else {
+            let token = textUntilPosition.slice(0, textUntilPosition.length - 1);
+            pythonCommand = `json.dumps(dir(${token}))`;
+            completions = await evalSlicer(pythonCommand);
+          }
+          let suggestions = [];
+          completions.forEach((completion) => {
+            suggestions.push({
+              label: completion,
+              kind: monaco.languages.CompletionItemKind.Function,
+              insertText: completion,
+              range: range,
+            });
           });
+          return suggestions;
         }
-
         monaco.languages.registerCompletionItemProvider("python", {
           triggerCharacters: ["."],
-          provideCompletionItems: function (model, position) {
+          provideCompletionItems: async function (model, position) {
             var textUntilPosition = model.getValueInRange({
               startLineNumber: position.lineNumber,
               startColumn: 1,
@@ -72,7 +76,7 @@ var completions = [];
               endColumn: word.endColumn,
             };
             return {
-              suggestions: createSuggestions(range),
+              suggestions: await createSuggestions(range, textUntilPosition, word),
             };
           },
         });
@@ -88,8 +92,8 @@ var completions = [];
         importScripts('https://unpkg.com/monaco-editor@latest/min/vs/base/worker/workerMain.js');
       `], { type: 'text/javascript' }));
 
-      require(["vs/editor/editor.main"], function () {
-        setupSlicerCompletion(monaco);
+      require(["vs/editor/editor.main"], async function () {
+        await setupSlicerCompletion(monaco);
         window.editor = monaco.editor.create(document.getElementById('container'), {
           value: pythonCode,
           language: 'python',
