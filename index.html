@@ -32,9 +32,9 @@
         }
 
         var pythonCode = `
-  import SampleData
-  SampleData.SampleDataLogic().downloadMRHead()
-  `
+import SampleData
+SampleData.SampleDataLogic().downloadMRHead()
+`
 
         const evalSlicer = async (s) => {
           let jsonResult = await slicerPython.evalPython(s, slicerPython.EvalPythonMode.EvalInput);
