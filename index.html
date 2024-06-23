@@ -24,6 +24,27 @@
       /*! (c) Andrea Giammarchi - ISC */
       var self=this||{};try{self.WeakRef=WeakRef,self.FinalizationGroup=FinalizationGroup}catch(e){!function(e,t){var i=new e;function n(e){i.set(this,e)}t(n.prototype,{deref:{value:function(){return i.get(this)}}});var a=new e;function r(e){a.set(this,[])}t(r.prototype,{register:{value:function(e,t){var i=a.get(this);i.indexOf(t)<0&&i.push(t)}},unregister:{value:function(e,t){var i=a.get(this),n=i.indexOf(t);return-1<n&&i.splice(n,1),-1<n}},cleanupSome:{value:function(e){e(a.get(this))}}}),self.WeakRef=n,self.FinalizationGroup=r}(WeakMap,Object.defineProperties)}
 
+      // Workaround for missing "at" method
+      //https://stackoverflow.com/questions/68464114/why-am-i-getting-at-is-not-a-function
+      function at(n) {
+        // ToInteger() abstract op
+        n = Math.trunc(n) || 0;
+        // Allow negative indexing from the end
+        if (n < 0) n += this.length;
+        // OOB access is guaranteed to return undefined
+        if (n < 0 || n >= this.length) return undefined;
+        // Otherwise, this is just normal property access
+        return this[n];
+      }
+
+      const TypedArray = Reflect.getPrototypeOf(Int8Array);
+      for (const C of [Array, String, TypedArray]) {
+          Object.defineProperty(C.prototype, "at",
+                                { value: at,
+                                  writable: true,
+                                  enumerable: false,
+                                  configurable: true });
+      }
 
       if ("slicerPython" in window) {
 
@@ -76,9 +97,7 @@ SampleData.SampleDataLogic().downloadMRHead()
                 endLineNumber: position.lineNumber,
                 endColumn: position.column,
               });
-              console.log('text', textUntilPosition)
               var word = model.getWordUntilPosition(position);
-              console.log('word', word)
               var range = {
                 startLineNumber: position.lineNumber,
                 endLineNumber: position.lineNumber,
