@@ -30,4 +30,38 @@ pages using the qSlicerWebWidget infrastructure.
 
 ![image](https://github.com/pieper/SlicerEditor/assets/126077/3e1d44d7-90ac-4660-910f-d537bc6e76e3)
 
+```
+
+DOCROOT = "/Users/pieper/slicer/latest/SlicerEditor/offline".encode()
+PORT = 9916
+import WebServer
+try:
+    logic.stop()
+except NameError:
+    pass
+logMessage = WebServer.WebServerLogic.defaultLogMessage
+logic = WebServer.WebServerLogic(port=PORT, logMessage=logMessage)
+logic.docroot = DOCROOT
+logic.requestHandlers = []
+logic.addDefaultRequestHandlers(enableSlicer=False, enableStaticPages=True)
+logic.start()
+
+
+editor = slicer.qSlicerWebWidget()
+editor.size = qt.QSize(900, 750)
+#editor.url = f"http://localhost:{PORT}".encode()
+editor.show()
+```
+
+Download https://github.com/pieper/SlicerEditor/releases/download/prototype/offline.tar.gz
+Open the archive and update the URL parameter to point to your extracted file.
+```
+URL = "file:///Users/pieper/slicer/latest/SlicerEditor/offline/index.html"
+
+editor = slicer.qSlicerWebWidget()
+editor.size = qt.QSize(900, 750)
+editor.url = URL
+editor.show()
+```
+
 * This is just a skeleton prototype as a proof of concept. See [this dicussion](https://discourse.slicer.org/t/support-python-text-highlighting-in-text-module/34511) for more ideas about how this can be improved to be useful.
