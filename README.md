@@ -1,13 +1,14 @@
 
 # SlicerEditor
 
-Experiment to embed an editor in Slicer.
+Experiments to embed an editor in Slicer.
 
 Currently uses ths [monaco]("https://github.com/microsoft/monaco-editor") editor (the one used in VSCode) in a qSlicerWebWidget.
 
 
 To try this in Slicer, use a Slicer preview newer than March 5, 2024 (where [this feature](https://github.com/Slicer/Slicer/pull/7624/files) is available).
 
+## Hosted online from CDN example
 
 Then paste the following in the python console:
 ```
@@ -30,6 +31,18 @@ pages using the qSlicerWebWidget infrastructure.
 
 ![image](https://github.com/pieper/SlicerEditor/assets/126077/3e1d44d7-90ac-4660-910f-d537bc6e76e3)
 
+## Offline examples
+
+These examples do not need an internet connection.
+
+For these, download https://github.com/pieper/SlicerEditor/releases/download/prototype/offline.tar.gz
+
+Open the archive and update the URL parameters below to point to your extracted file.
+
+Note: the archive is monaco build tree and has not been optimized for size.
+
+### Hosted from Slicer WebServer example
+
 ```
 
 DOCROOT = "/Users/pieper/slicer/latest/SlicerEditor/offline".encode()
@@ -46,15 +59,14 @@ logic.requestHandlers = []
 logic.addDefaultRequestHandlers(enableSlicer=False, enableStaticPages=True)
 logic.start()
 
-
 editor = slicer.qSlicerWebWidget()
 editor.size = qt.QSize(900, 750)
 #editor.url = f"http://localhost:{PORT}".encode()
 editor.show()
 ```
 
-Download https://github.com/pieper/SlicerEditor/releases/download/prototype/offline.tar.gz
-Open the archive and update the URL parameter to point to your extracted file.
+### Read directly from file example
+
 ```
 URL = "file:///Users/pieper/slicer/latest/SlicerEditor/offline/index.html"
 
