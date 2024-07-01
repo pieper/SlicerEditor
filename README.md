@@ -1,5 +1,8 @@
 
+**This was an experiment that has been migrated to its official home in SlicerMorph: https://github.com/SlicerMorph/SlicerEditor/tree/main**
+
 # SlicerEditor
+
 
 Experiments to embed an editor in Slicer.
 
